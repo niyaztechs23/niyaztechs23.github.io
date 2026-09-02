@@ -109,11 +109,11 @@
 
   @keyframes fadeIn { to { opacity: 1; } }
 
-  /* --- walkthrough popup --- */
+  /* --- single in-place stepper card --- */
 
   .walk {
     margin-top: 18px;
-    padding: 24px;
+    padding: 26px;
     border: 1px solid var(--line);
     border-radius: 10px;
     background: #0e1517;
@@ -141,6 +141,15 @@
     font-size: 1.4rem;
   }
 
+  .walk-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin: 0 0 6px;
+  }
+
+  .walk-tag::before { content: "// "; color: var(--pink); }
+
   .walk-heading {
     font-family: 'Sora', sans-serif;
     font-weight: 800;
@@ -159,7 +168,123 @@
     max-width: 50ch;
   }
 
-  .walk-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  /* content that changes per step (bullets, idcards, buttons) */
+  .walk-extra {
+    margin: 0 0 18px;
+    opacity: 1;
+    transition: opacity 0.25s ease;
+  }
+
+  .walk-extra.fading { opacity: 0; }
+
+  .idcards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  @media (max-width: 480px) { .idcards { grid-template-columns: 1fr; } }
+
+  .idcard {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 14px 16px;
+    background: rgba(255,255,255,0.015);
+  }
+
+  .idcard .emoji { font-size: 1.2rem; margin-bottom: 6px; display: block; }
+
+  .idcard .handle {
+    font-family: 'Sora', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--green);
+    margin: 0 0 6px;
+  }
+
+  .idcard.pink .handle { color: var(--pink); }
+
+  .idcard p {
+    font-family: 'Sora', sans-serif;
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  ul.bullets {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 8px;
+  }
+
+  ul.bullets li {
+    font-family: 'Sora', sans-serif;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  ul.bullets li::before { content: "▸"; color: var(--green); flex-shrink: 0; }
+
+  ul.log {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 8px;
+  }
+
+  ul.log li {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    font-family: 'Sora', sans-serif;
+    font-size: 0.85rem;
+    border-bottom: 1px dashed var(--line);
+    padding-bottom: 8px;
+  }
+
+  ul.log li span:last-child { color: var(--muted); font-size: 0.75rem; white-space: nowrap; }
+
+  .note {
+    font-family: 'Sora', sans-serif;
+    font-size: 0.8rem;
+    color: var(--cyan);
+    opacity: 0.85;
+    margin-top: 10px;
+  }
+
+  .cta-row { display: flex; flex-wrap: wrap; gap: 10px; }
+
+  .cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-decoration: none;
+    padding: 9px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--line);
+    color: var(--text);
+    background: rgba(255,255,255,0.02);
+    transition: transform 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  }
+
+  .cta-btn:hover { transform: translateY(-2px); }
+  .cta-btn.insta:hover { border-color: var(--pink); color: var(--pink); }
+  .cta-btn.linkedin:hover { border-color: var(--cyan); color: var(--cyan); }
+  .cta-btn.github:hover { border-color: var(--green); color: var(--green); }
+
+  /* footer row inside the card: dots + nav buttons */
+
+  .walk-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
 
   .walk-dots { display: flex; gap: 6px; }
 
@@ -173,156 +298,34 @@
 
   .walk-dots span.on { background: var(--pink); transform: scale(1.3); }
 
-  .walk-btn {
+  .walk-btns { display: flex; gap: 8px; }
+
+  .walk-btn, .walk-btn-back {
     font-family: 'Sora', sans-serif;
     font-weight: 600;
     font-size: 0.85rem;
-    color: var(--bg);
-    background: var(--pink);
     border: none;
     cursor: pointer;
-    padding: 9px 18px;
+    padding: 9px 16px;
     border-radius: 6px;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+  }
+
+  .walk-btn {
+    color: var(--bg);
+    background: var(--pink);
   }
 
   .walk-btn:hover { transform: translateY(-2px); box-shadow: 0 0 20px rgba(255,79,216,0.35); }
 
-  /* --- revealed sections --- */
-
-  section.stop {
-    margin-top: 0;
-    opacity: 0;
-    max-height: 0;
-    overflow: hidden;
-    transition: opacity 0.5s ease, max-height 0.7s ease, margin-top 0.5s ease;
-  }
-
-  section.stop.show { opacity: 1; max-height: 700px; margin-top: 22px; }
-
-  section.stop h3 {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.78rem;
+  .walk-btn-back {
     color: var(--muted);
-    font-weight: 500;
-    margin: 0 0 14px;
-  }
-
-  section.stop h3::before { content: "// "; color: var(--pink); }
-
-  p.body-text {
-    font-family: 'Sora', sans-serif;
-    font-size: 0.9rem;
-    max-width: 58ch;
-    margin: 0 0 14px;
-    opacity: 0.9;
-  }
-
-  .idcards { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-
-  @media (max-width: 480px) { .idcards { grid-template-columns: 1fr; } }
-
-  .idcard {
+    background: transparent;
     border: 1px solid var(--line);
-    border-radius: 8px;
-    padding: 18px 18px;
-    background: rgba(255,255,255,0.015);
   }
 
-  .idcard .emoji { font-size: 1.4rem; margin-bottom: 8px; display: block; }
-
-  .idcard .handle {
-    font-family: 'Sora', sans-serif;
-    font-size: 1.1rem;
-    font-weight: 800;
-    color: var(--green);
-    margin: 0 0 8px;
-  }
-
-  .idcard.pink .handle { color: var(--pink); }
-
-  .idcard p {
-    font-family: 'Sora', sans-serif;
-    font-size: 0.85rem;
-    color: var(--muted);
-    margin: 0;
-    line-height: 1.55;
-  }
-
-  ul.bullets {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 14px;
-    display: grid;
-    gap: 8px;
-  }
-
-  ul.bullets li {
-    font-family: 'Sora', sans-serif;
-    font-size: 0.88rem;
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-  }
-
-  ul.bullets li::before { content: "▸"; color: var(--green); flex-shrink: 0; }
-
-  ul.log {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 14px;
-    display: grid;
-    gap: 10px;
-  }
-
-  ul.log li {
-    display: flex;
-    justify-content: space-between;
-    gap: 16px;
-    font-family: 'Sora', sans-serif;
-    font-size: 0.88rem;
-    border-bottom: 1px dashed var(--line);
-    padding-bottom: 10px;
-  }
-
-  ul.log li span:last-child { color: var(--muted); font-size: 0.78rem; white-space: nowrap; }
-
-  .note {
-    font-family: 'Sora', sans-serif;
-    font-size: 0.82rem;
-    color: var(--cyan);
-    opacity: 0.85;
-    max-width: 56ch;
-  }
-
-  .cta-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 18px;
-  }
-
-  .cta-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-family: 'JetBrains Mono', monospace;
-    font-weight: 600;
-    font-size: 0.82rem;
-    text-decoration: none;
-    padding: 10px 16px;
-    border-radius: 6px;
-    border: 1px solid var(--line);
-    color: var(--text);
-    background: rgba(255,255,255,0.02);
-    transition: transform 0.15s ease, border-color 0.15s ease, color 0.15s ease;
-  }
-
-  .cta-btn:hover { transform: translateY(-2px); }
-
-  .cta-btn.insta:hover { border-color: var(--pink); color: var(--pink); }
-  .cta-btn.linkedin:hover { border-color: var(--cyan); color: var(--cyan); }
-  .cta-btn.github:hover { border-color: var(--green); color: var(--green); }
+  .walk-btn-back:hover { color: var(--text); border-color: var(--muted); }
+  .walk-btn-back.hidden { visibility: hidden; }
 
   .replay {
     margin-top: 26px;
@@ -382,76 +385,20 @@
         <div class="walk-row">
           <div class="walk-avatar" id="walkAvatar">👀</div>
           <div style="flex: 1;">
+            <p class="walk-tag" id="walkTag"></p>
             <h2 class="walk-heading" id="walkHeading"></h2>
             <p class="walk-body" id="walkBody"></p>
+            <div class="walk-extra" id="walkExtra"></div>
             <div class="walk-footer">
               <div class="walk-dots" id="walkDots"></div>
-              <button class="walk-btn" id="walkBtn" type="button">Next →</button>
+              <div class="walk-btns">
+                <button class="walk-btn-back" id="backBtn" type="button">← back</button>
+                <button class="walk-btn" id="nextBtn" type="button">Next →</button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-
-      <section class="stop" id="stop-0">
-        <h3>two logins, one person</h3>
-        <div class="idcards">
-          <div class="idcard">
-            <span class="emoji">🎮</span>
-            <p class="handle">FIRE</p>
-            <p>The one who plays for the fun. Just vibes, stays for the chaos, and everything in between.</p>
-          </div>
-          <div class="idcard pink">
-            <span class="emoji">🐧</span>
-            <p class="handle">AMGLITCH</p>
-            <p>The one who shows up once the terminal's open. Breaks things on purpose, just to learn how they're built — learning ethical hacking, CTFs, and everything in between.</p>
-          </div>
-        </div>
-      </section>
-
-      <section class="stop" id="stop-1">
-        <h3>currently</h3>
-        <p class="body-text">
-          Learning the fundamentals across a bunch of programming
-          languages — Python, C, Java, and more — plus frontend, backend,
-          UI/UX, and CSS. Still a beginner, still figuring it out one
-          project at a time.
-        </p>
-        <ul class="bullets">
-          <li>I do some crazy stuff with Python 🐍</li>
-          <li>Built a Pokédex image-recognizer AI 🖼️</li>
-          <li>Building projects using open-source GitHub repos 🔧</li>
-        </ul>
-      </section>
-
-      <section class="stop" id="stop-2">
-        <h3>going deeper</h3>
-        <p class="body-text">
-          Cybersecurity is where my actual interest lives.
-        </p>
-        <ul class="log">
-          <li><span>Linux basics & commands</span><span>ongoing 🐧</span></li>
-          <li><span>Practicing CTFs</span><span>ongoing 🚩</span></li>
-          <li><span>Common cyber attacks, done ethically</span><span>shipped ✅</span></li>
-        </ul>
-        <p class="note">
-          🧪 I test these things out on my own machine to see how attacks
-          actually work under the hood.
-        </p>
-      </section>
-
-      <section class="stop" id="stop-3">
-        <h3>the bigger plan</h3>
-        <p class="body-text">
-          Trying to pull together a small crew of friends to build
-          something that actually helps people — not just another side
-          project that dies in a GitHub repo. 🚀
-        </p>
-        <div class="cta-row">
-          <a href="https://www.instagram.com/niyaz_23_offi" class="cta-btn insta" target="_blank" rel="noopener">cd ~/insta →</a>
-          <a href="https://www.linkedin.com/in/niyaz-amglitch-8b8787410" class="cta-btn linkedin" target="_blank" rel="noopener">cd ~/linkedin →</a>
-          <a href="https://github.com/niyaztechs23" class="cta-btn github" target="_blank" rel="noopener">cd ~/github →</a>
-        </div>
-      </section>
 
       <button class="replay" id="replayBtn" type="button">↺ replay the walkthrough</button>
     </div>
@@ -471,23 +418,63 @@
   const steps = [
     {
       avatar: "👀",
+      tag: "two logins, one person",
       heading: "Who even am I?",
-      body: "Two logins, one person 🕶️. Curious which one's really me? Hit next and find out."
+      body: "Two logins, one person 🕶️. Curious which one's really me? Here's the breakdown.",
+      extra: `
+        <div class="idcards">
+          <div class="idcard">
+            <span class="emoji">🎮</span>
+            <p class="handle">FIRE</p>
+            <p>A gamer. The one who plays for the fun, stays for the chaos, and everything in between.</p>
+          </div>
+          <div class="idcard pink">
+            <span class="emoji">🐧</span>
+            <p class="handle">AMGLITCH</p>
+            <p>The one who shows up once the terminal's open. Breaks things on purpose, just to learn how they're built — learning ethical hacking, CTFs, and everything in between.</p>
+          </div>
+        </div>
+      `
     },
     {
       avatar: "🛠️",
+      tag: "currently",
       heading: "What am I building rn?",
-      body: "Fair warning — it's a mix of half-finished experiments and a few things I'm actually proud of."
+      body: "Learning the fundamentals across a bunch of programming languages — Python, C, Java, and more — plus frontend, backend, UI/UX, and CSS. Still a beginner, still figuring it out one project at a time.",
+      extra: `
+        <ul class="bullets">
+          <li>I do some crazy stuff with Python 🐍</li>
+          <li>Built a Pokédex image-recognizer AI 🖼️</li>
+          <li>Building projects using open-source GitHub repos 🔧</li>
+        </ul>
+      `
     },
     {
       avatar: "🔐",
+      tag: "going deeper",
       heading: "Going deeper...",
-      body: "This is the part I actually lose sleep over. Cybersecurity, Linux, and breaking things on purpose."
+      body: "Cybersecurity is where my actual interest lives.",
+      extra: `
+        <ul class="log">
+          <li><span>Linux basics & commands</span><span>ongoing 🐧</span></li>
+          <li><span>Practicing CTFs</span><span>ongoing 🚩</span></li>
+          <li><span>Common cyber attacks, done ethically</span><span>shipped ✅</span></li>
+        </ul>
+        <p class="note">🧪 I test these things out on my own machine to see how attacks actually work under the hood.</p>
+      `
     },
     {
       avatar: "🎯",
+      tag: "the bigger plan",
       heading: "The bigger plan",
-      body: "Not gonna lie — this is the goal behind all of it."
+      body: "Trying to pull together a small crew of friends to build something that actually helps people — not just another side project that dies in a GitHub repo. 🚀",
+      extra: `
+        <div class="cta-row">
+          <a href="https://www.instagram.com/niyaz_23_offi" class="cta-btn insta" target="_blank" rel="noopener">cd ~/insta →</a>
+          <a href="https://www.linkedin.com/in/niyaz-amglitch-8b8787410" class="cta-btn linkedin" target="_blank" rel="noopener">cd ~/linkedin →</a>
+          <a href="https://github.com/niyaztechs23" class="cta-btn github" target="_blank" rel="noopener">cd ~/github →</a>
+        </div>
+      `
     }
   ];
 
@@ -496,10 +483,13 @@
   const enterBtn = document.getElementById('enterBtn');
   const walkBox = document.getElementById('walkBox');
   const walkAvatar = document.getElementById('walkAvatar');
+  const walkTag = document.getElementById('walkTag');
   const walkHeading = document.getElementById('walkHeading');
   const walkBody = document.getElementById('walkBody');
-  const walkBtn = document.getElementById('walkBtn');
+  const walkExtra = document.getElementById('walkExtra');
   const walkDots = document.getElementById('walkDots');
+  const nextBtn = document.getElementById('nextBtn');
+  const backBtn = document.getElementById('backBtn');
   const replayBtn = document.getElementById('replayBtn');
 
   walkDots.innerHTML = steps.map((_, i) => `<span data-i="${i}"></span>`).join('');
@@ -508,49 +498,63 @@
   function renderStep() {
     const step = steps[current];
     walkAvatar.textContent = step.avatar;
+    walkTag.textContent = step.tag;
     walkHeading.textContent = step.heading;
     walkBody.textContent = step.body;
-    walkBtn.textContent = current === steps.length - 1 ? "That's the plan →" : "Next →";
+    walkExtra.innerHTML = step.extra;
+
+    nextBtn.textContent = current === steps.length - 1 ? "That's the plan →" : "Next →";
+    backBtn.classList.toggle('hidden', current === 0);
 
     dotEls.forEach((d, i) => d.classList.toggle('on', i === current));
-
-    const section = document.getElementById('stop-' + current);
-    if (section) section.classList.add('show');
   }
 
   function openWalk() {
     walkBox.classList.add('show');
     enterBtn.classList.add('hidden');
+    current = 0;
     renderStep();
+  }
+
+  function goTo(index) {
+    walkExtra.classList.add('fading');
+    setTimeout(() => {
+      current = index;
+      renderStep();
+      walkExtra.classList.remove('fading');
+    }, 150);
   }
 
   function nextStep() {
     if (current < steps.length - 1) {
-      current += 1;
-      renderStep();
+      goTo(current + 1);
     } else {
-      walkBox.style.display = 'none';
+      walkBox.classList.remove('show');
       replayBtn.classList.add('show');
     }
   }
 
+  function prevStep() {
+    if (current > 0) goTo(current - 1);
+  }
+
   function replay() {
-    document.querySelectorAll('section.stop').forEach(s => s.classList.remove('show'));
-    current = 0;
-    walkBox.style.display = 'block';
     replayBtn.classList.remove('show');
+    walkBox.classList.add('show');
+    current = 0;
     renderStep();
   }
 
   enterBtn.addEventListener('click', openWalk);
-  walkBtn.addEventListener('click', nextStep);
+  nextBtn.addEventListener('click', nextStep);
+  backBtn.addEventListener('click', prevStep);
   replayBtn.addEventListener('click', replay);
 
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Enter') return;
     if (!walkBox.classList.contains('show')) {
       openWalk();
-    } else if (walkBox.style.display !== 'none') {
+    } else {
       nextStep();
     }
   });
