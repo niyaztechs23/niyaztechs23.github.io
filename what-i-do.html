@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>what i do // niyaz</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Sora:wght@400;500;600;800&display=swap');
+
+  :root {
+    --bg: #05070a;
+    --bg-card: #0b1113;
+    --line: #1c2b28;
+    --text: #d8ede6;
+    --muted: #5f7a72;
+    --green: #00ff9c;
+    --pink: #ff4fd8;
+    --cyan: #37e6ff;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    background-image:
+      radial-gradient(circle at 12% -5%, rgba(0,255,156,0.09), transparent 42%),
+      radial-gradient(circle at 90% 105%, rgba(255,79,216,0.08), transparent 42%),
+      radial-gradient(circle at 50% 50%, rgba(55,230,255,0.04), transparent 60%);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+
+  a { color: var(--green); }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
+
+  .wrap { max-width: 660px; margin: 0 auto; padding: 40px 20px 60px; }
+
+  .terminal {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--bg-card);
+    overflow: hidden;
+  }
+
+  .bar { display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-bottom: 1px solid var(--line); }
+
+  .dot { width: 10px; height: 10px; border-radius: 50%; background: #2a3436; }
+  .dot.red { background: #ff5f56; }
+  .dot.yellow { background: #ffbd2e; }
+  .dot.green { background: #27c93f; }
+
+  .bar-title { margin-left: 8px; font-size: 0.75rem; color: var(--muted); }
+
+  .screen { padding: 28px 24px 32px; }
+
+  nav { font-size: 0.85rem; display: flex; gap: 4px; margin-bottom: 26px; flex-wrap: wrap; }
+
+  nav a {
+    text-decoration: none;
+    color: var(--muted);
+    padding: 6px 12px;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+  }
+
+  nav a.active { color: var(--bg); background: var(--green); border-color: var(--green); }
+  nav a:not(.active):hover { color: var(--green); border-color: var(--green); }
+
+  .prompt { color: var(--muted); font-size: 0.9rem; margin: 0 0 4px; }
+  .prompt::before { content: "guest@web:~$ "; color: var(--pink); }
+
+  .typed {
+    border-right: 2px solid var(--green);
+    white-space: nowrap;
+    overflow: hidden;
+    width: 0;
+    animation: type 1.6s steps(18, end) forwards, blink 0.8s step-end infinite;
+    display: inline-block;
+  }
+
+  @keyframes type { from { width: 0; } to { width: 18ch; } }
+  @keyframes blink { 50% { border-color: transparent; } }
+
+  .enter-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 14px 0 0;
+    padding: 8px 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--green);
+    background: transparent;
+    border: 1px dashed var(--green);
+    border-radius: 4px;
+    cursor: pointer;
+    opacity: 0;
+    animation: fadeIn 0.3s ease 1.8s forwards;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+
+  .enter-btn:hover { background: var(--green); color: var(--bg); }
+  .enter-btn.hidden { display: none; }
+
+  @keyframes fadeIn { to { opacity: 1; } }
+
+  /* --- walkthrough popup --- */
+
+  .walk {
+    margin-top: 18px;
+    padding: 24px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: #0e1517;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.45);
+    opacity: 0;
+    transform: translateY(14px) scale(0.98);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    pointer-events: none;
+  }
+
+  .walk.show { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+
+  .walk-row { display: flex; align-items: flex-start; gap: 16px; }
+
+  .walk-avatar {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    background: linear-gradient(145deg, rgba(0,255,156,0.15), rgba(255,79,216,0.15));
+    border: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+  }
+
+  .walk-heading {
+    font-family: 'Sora', sans-serif;
+    font-weight: 800;
+    font-size: 1.2rem;
+    color: var(--text);
+    margin: 0 0 8px;
+  }
+
+  .walk-body {
+    font-family: 'Sora', sans-serif;
+    font-size: 0.88rem;
+    color: var(--text);
+    opacity: 0.88;
+    line-height: 1.6;
+    margin: 0 0 16px;
+    max-width: 50ch;
+  }
+
+  .walk-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+
+  .walk-dots { display: flex; gap: 6px; }
+
+  .walk-dots span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--line);
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+
+  .walk-dots span.on { background: var(--pink); transform: scale(1.3); }
+
+  .walk-btn {
+    font-family: 'Sora', sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--bg);
+    background: var(--pink);
+    border: none;
+    cursor: pointer;
+    padding: 9px 18px;
+    border-radius: 6px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .walk-btn:hover { transform: translateY(-2px); box-shadow: 0 0 20px rgba(255,79,216,0.35); }
+
+  /* --- revealed sections --- */
+
+  section.stop {
+    margin-top: 0;
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: opacity 0.5s ease, max-height 0.7s ease, margin-top 0.5s ease;
+  }
+
+  section.stop.show { opacity: 1; max-height: 700px; margin-top: 22px; }
+
+  section.stop h3 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--muted);
+    font-weight: 500;
+    margin: 0 0 14px;
+  }
+
+  section.stop h3::before { content: "// "; color: var(--pink); }
+
+  p.body-text {
+    font-family: 'Sora', sans-serif;
+    font-size: 0.9rem;
+    max-width: 58ch;
+    margin: 0 0 14px;
+    opacity: 0.9;
+  }
+
+  .idcards { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+  @media (max-width: 480px) { .idcards { grid-template-columns: 1fr; } }
+
+  .idcard {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 18px 18px;
+    background: rgba(255,255,255,0.015);
+  }
+
+  .idcard .emoji { font-size: 1.4rem; margin-bottom: 8px; display: block; }
+
+  .idcard .handle {
+    font-family: 'Sora', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--green);
+    margin: 0 0 8px;
+  }
+
+  .idcard.pink .handle { color: var(--pink); }
+
+  .idcard p {
+    font-family: 'Sora', sans-serif;
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin: 0;
+    line-height: 1.55;
+  }
+
+  ul.bullets {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 14px;
+    display: grid;
+    gap: 8px;
+  }
+
+  ul.bullets li {
+    font-family: 'Sora', sans-serif;
+    font-size: 0.88rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  ul.bullets li::before { content: "▸"; color: var(--green); flex-shrink: 0; }
+
+  ul.log {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 14px;
+    display: grid;
+    gap: 10px;
+  }
+
+  ul.log li {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    font-family: 'Sora', sans-serif;
+    font-size: 0.88rem;
+    border-bottom: 1px dashed var(--line);
+    padding-bottom: 10px;
+  }
+
+  ul.log li span:last-child { color: var(--muted); font-size: 0.78rem; white-space: nowrap; }
+
+  .note {
+    font-family: 'Sora', sans-serif;
+    font-size: 0.82rem;
+    color: var(--cyan);
+    opacity: 0.85;
+    max-width: 56ch;
+  }
+
+  .cta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 18px;
+  }
+
+  .cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    font-size: 0.82rem;
+    text-decoration: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    border: 1px solid var(--line);
+    color: var(--text);
+    background: rgba(255,255,255,0.02);
+    transition: transform 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  }
+
+  .cta-btn:hover { transform: translateY(-2px); }
+
+  .cta-btn.insta:hover { border-color: var(--pink); color: var(--pink); }
+  .cta-btn.linkedin:hover { border-color: var(--cyan); color: var(--cyan); }
+  .cta-btn.github:hover { border-color: var(--green); color: var(--green); }
+
+  .replay {
+    margin-top: 26px;
+    font-size: 0.78rem;
+    color: var(--muted);
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-decoration: underline dashed;
+    text-underline-offset: 4px;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .replay.show { opacity: 1; }
+  .replay:hover { color: var(--green); }
+
+  footer {
+    margin-top: 22px;
+    padding: 18px 24px;
+    border-top: 1px solid var(--line);
+    font-size: 0.75rem;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  footer a { color: var(--muted); text-decoration: none; }
+  footer a:hover { color: var(--green); }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="terminal">
+    <div class="bar">
+      <span class="dot red"></span>
+      <span class="dot yellow"></span>
+      <span class="dot green"></span>
+      <span class="bar-title">niyaz@web — /what-i-do</span>
+    </div>
+
+    <div class="screen">
+      <nav>
+        <a href="index.html">home</a>
+        <a href="who-am-i.html">who am i</a>
+        <a href="what-i-do.html" class="active">what i do</a>
+      </nav>
+
+      <p class="prompt"><span class="typed">./run --what-i-do</span></p>
+
+      <button class="enter-btn" id="enterBtn" type="button">press enter ↵</button>
+
+      <div class="walk" id="walkBox">
+        <div class="walk-row">
+          <div class="walk-avatar" id="walkAvatar">👀</div>
+          <div style="flex: 1;">
+            <h2 class="walk-heading" id="walkHeading"></h2>
+            <p class="walk-body" id="walkBody"></p>
+            <div class="walk-footer">
+              <div class="walk-dots" id="walkDots"></div>
+              <button class="walk-btn" id="walkBtn" type="button">Next →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <section class="stop" id="stop-0">
+        <h3>two logins, one person</h3>
+        <div class="idcards">
+          <div class="idcard">
+            <span class="emoji">🎮</span>
+            <p class="handle">FIRE</p>
+            <p>The one who plays for the fun. Just vibes, stays for the chaos, and everything in between.</p>
+          </div>
+          <div class="idcard pink">
+            <span class="emoji">🐧</span>
+            <p class="handle">AMGLITCH</p>
+            <p>The one who shows up once the terminal's open. Breaks things on purpose, just to learn how they're built — learning ethical hacking, CTFs, and everything in between.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="stop" id="stop-1">
+        <h3>currently</h3>
+        <p class="body-text">
+          Learning the fundamentals across a bunch of programming
+          languages — Python, C, Java, and more — plus frontend, backend,
+          UI/UX, and CSS. Still a beginner, still figuring it out one
+          project at a time.
+        </p>
+        <ul class="bullets">
+          <li>I do some crazy stuff with Python 🐍</li>
+          <li>Built a Pokédex image-recognizer AI 🖼️</li>
+          <li>Building projects using open-source GitHub repos 🔧</li>
+        </ul>
+      </section>
+
+      <section class="stop" id="stop-2">
+        <h3>going deeper</h3>
+        <p class="body-text">
+          Cybersecurity is where my actual interest lives.
+        </p>
+        <ul class="log">
+          <li><span>Linux basics & commands</span><span>ongoing 🐧</span></li>
+          <li><span>Practicing CTFs</span><span>ongoing 🚩</span></li>
+          <li><span>Common cyber attacks, done ethically</span><span>shipped ✅</span></li>
+        </ul>
+        <p class="note">
+          🧪 I test these things out on my own machine to see how attacks
+          actually work under the hood.
+        </p>
+      </section>
+
+      <section class="stop" id="stop-3">
+        <h3>the bigger plan</h3>
+        <p class="body-text">
+          Trying to pull together a small crew of friends to build
+          something that actually helps people — not just another side
+          project that dies in a GitHub repo. 🚀
+        </p>
+        <div class="cta-row">
+          <a href="https://www.instagram.com/niyaz_23_offi" class="cta-btn insta" target="_blank" rel="noopener">cd ~/insta →</a>
+          <a href="https://www.linkedin.com/in/niyaz-amglitch-8b8787410" class="cta-btn linkedin" target="_blank" rel="noopener">cd ~/linkedin →</a>
+          <a href="https://github.com/niyaztechs23" class="cta-btn github" target="_blank" rel="noopener">cd ~/github →</a>
+        </div>
+      </section>
+
+      <button class="replay" id="replayBtn" type="button">↺ replay the walkthrough</button>
+    </div>
+
+    <footer>
+      <span>© 2026 niyaz</span>
+      <span>
+        <a href="https://github.com/niyaztechs23" target="_blank" rel="noopener">github</a> ·
+        <a href="https://www.linkedin.com/in/niyaz-amglitch-8b8787410" target="_blank" rel="noopener">linkedin</a> ·
+        <a href="https://www.instagram.com/niyaz_23_offi" target="_blank" rel="noopener">instagram</a>
+      </span>
+    </footer>
+  </div>
+</div>
+
+<script>
+  const steps = [
+    {
+      avatar: "👀",
+      heading: "Who even am I?",
+      body: "Two logins, one person 🕶️. Curious which one's really me? Hit next and find out."
+    },
+    {
+      avatar: "🛠️",
+      heading: "What am I building rn?",
+      body: "Fair warning — it's a mix of half-finished experiments and a few things I'm actually proud of."
+    },
+    {
+      avatar: "🔐",
+      heading: "Going deeper...",
+      body: "This is the part I actually lose sleep over. Cybersecurity, Linux, and breaking things on purpose."
+    },
+    {
+      avatar: "🎯",
+      heading: "The bigger plan",
+      body: "Not gonna lie — this is the goal behind all of it."
+    }
+  ];
+
+  let current = 0;
+
+  const enterBtn = document.getElementById('enterBtn');
+  const walkBox = document.getElementById('walkBox');
+  const walkAvatar = document.getElementById('walkAvatar');
+  const walkHeading = document.getElementById('walkHeading');
+  const walkBody = document.getElementById('walkBody');
+  const walkBtn = document.getElementById('walkBtn');
+  const walkDots = document.getElementById('walkDots');
+  const replayBtn = document.getElementById('replayBtn');
+
+  walkDots.innerHTML = steps.map((_, i) => `<span data-i="${i}"></span>`).join('');
+  const dotEls = [...walkDots.children];
+
+  function renderStep() {
+    const step = steps[current];
+    walkAvatar.textContent = step.avatar;
+    walkHeading.textContent = step.heading;
+    walkBody.textContent = step.body;
+    walkBtn.textContent = current === steps.length - 1 ? "That's the plan →" : "Next →";
+
+    dotEls.forEach((d, i) => d.classList.toggle('on', i === current));
+
+    const section = document.getElementById('stop-' + current);
+    if (section) section.classList.add('show');
+  }
+
+  function openWalk() {
+    walkBox.classList.add('show');
+    enterBtn.classList.add('hidden');
+    renderStep();
+  }
+
+  function nextStep() {
+    if (current < steps.length - 1) {
+      current += 1;
+      renderStep();
+    } else {
+      walkBox.style.display = 'none';
+      replayBtn.classList.add('show');
+    }
+  }
+
+  function replay() {
+    document.querySelectorAll('section.stop').forEach(s => s.classList.remove('show'));
+    current = 0;
+    walkBox.style.display = 'block';
+    replayBtn.classList.remove('show');
+    renderStep();
+  }
+
+  enterBtn.addEventListener('click', openWalk);
+  walkBtn.addEventListener('click', nextStep);
+  replayBtn.addEventListener('click', replay);
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter') return;
+    if (!walkBox.classList.contains('show')) {
+      openWalk();
+    } else if (walkBox.style.display !== 'none') {
+      nextStep();
+    }
+  });
+</script>
+
+</body>
+</html>
