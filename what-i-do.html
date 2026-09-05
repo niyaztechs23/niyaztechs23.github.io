@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<!-- GoatCounter (private visitor counter) -->
 <script data-goatcounter="https://firex07.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -257,6 +258,19 @@
 
   .cta-row { display: flex; flex-wrap: wrap; gap: 10px; }
 
+  .step-img-wrap {
+    margin-top: 4px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+  }
+
+  .step-img-wrap img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
   .cta-btn {
     display: inline-flex;
     align-items: center;
@@ -465,10 +479,21 @@
       `
     },
     {
+      avatar: "🎓",
+      tag: "my 9-5?",
+      heading: "My 9–5?",
+      body: "9–5 — College. My first step into the future. These four years are going to shape my knowledge, my mindset, and the person I want to become, while giving me the chance to learn, grow, and create something I can truly call my own.",
+      extra: `
+        <div class="step-img-wrap">
+          <img src="campus-lineart.png" alt="JJ College of Engineering and Technology entrance, line art">
+        </div>
+      `
+    },
+    {
       avatar: "🎯",
       tag: "the bigger plan",
       heading: "The bigger plan",
-      body: "Trying to pull together a small crew of friends to build something that actually helps people — not just another side project that dies in a GitHub repo. 🚀",
+      body: "I have a plan to do... 😶",
       extra: `
         <div class="cta-row">
           <a href="https://www.instagram.com/niyaz_23_offi" class="cta-btn insta" target="_blank" rel="noopener">cd ~/insta →</a>
